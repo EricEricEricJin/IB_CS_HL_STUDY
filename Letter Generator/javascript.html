@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <head>
+        <script src="download.js"></script>
+        <script src="jquery.min.js"></script>
+        <script>
+
+
+        </script>
+
+
+    </head>
+
+
+    <body>
+            <script type="text/javascript">
+                function isLeapyear(year) {
+                    if ((year % 100) == 0) {
+                        if ((year % 400) == 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        if ((year % 4) == 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+                function DateInterval(date_low, date_high) {
+                    date_interval = [0,0,0];
+                    if (date_high[2] >= date_low[2]) {
+                        date_interval[2] = date_high[2] - date_low[2];
+                        if (date_high[1] >= date_low[1]) {
+                            date_interval[1] = date_high[1] - date_low[1];
+                            date_interval[0] = date_high[0] - date_low[0];
+                        } else {
+                            date_interval[1] = 12 + date_high[1] - date_low[1];
+                            date_interval[0] = date_high[0] - date_low[0] - 1;
+                        }
+                    } else {
+                        var days = 0;
+                        // var month = date_low[1];
+                    
+                        var month = date_low[1];
+
+                        switch (month) {
+                            case 1:
+                                days += 31;
+                                break;
+                            case 2:
+                                if (isLeapyear(date_low[0])) { 
+                                    console.log("LEAPLEAP");
+                                    days += 29;
+                                } else {
+                                    days += 28;
+                                }
+                                break;
+                            case 3:
+                                days += 31;
+                                break;
+                            case 4:
+                                days += 30;
+                                break;
+                            case 5:
+                                bays += 31;
+                                break;
+                            case 6:
+                                days += 30;
+                                break;
+                            case 7:
+                                days += 31;
+                                break;
+                            case 8:
+                                days += 31;
+                                break;
+                            case 9:
+                                days += 30;
+                                break;
+                            case 10:
+                                days += 31;
+                                break;
+                            case 11:
+                                days += 30;
+                                break;
+                            case 12:
+                                days += 31;
+                                break;
+                        }
+
+
+                        days -= date_low[2];
+                        days += date_high[2];
+
+
+                        date_interval[2] = days;
+                        if (date_high[1] > date_low[1]) {
+                            date_interval[1] = date_high[1] - date_low[1] - 1;
+                            date_interval[0] = date_high[0] - date_low[0];
+                        } else if (date_high[1] == date_low[1]) {
+                            date_interval[1] = 11;
+                            date_interval[0] = date_high[0] - date_low[0] - 1;
+                        } else {
+                            date_interval[1] = 12 + date_high[1] - date_low[1] - 1;
+                            date_interval[0] = date_high[0] - date_low[0] - 1;
+                        }
+                    }
+                    return date_interval;
+                }
+
+
+                $(document).ready(function() {
+                    $("#save").click(
+                        function () {
+                            // console.log(document.getElementById("female").checked);
+                            
+                            
+                            if (document.getElementById("male").checked) {
+                                // alert("AAAA");
+                                var gender = "Mr. ";
+                            } else if(document.getElementById("female").checked) {
+                                var gender = "Mrs. ";
+                            }
+                            
+                          
+
+                            var now_date = new Date();
+
+                            var now_year = now_date.getFullYear();
+                            
+                            var now_month = now_date.getMonth() + 1;
+                            var now_day = now_date.getDate();
+
+                            var born_year = Number($("#yb").val());
+                            var born_month =Number($("#mb").val());
+                            var born_day = Number($("#db").val());
+
+
+                            if (born_month > 12 || born_month < 1) {
+                                alert("PLZ Input correct month.");
+                            }
+
+
+                            if (born_day < 1) {
+                                alert("PLZ Input correct day.");
+                            }
+                            if (born_month == 2) {
+                                if (isLeapyear(born_year)) {
+                                    if (born_day > 29) {
+                                        alert("PLZ Input correct day.");
+                                    }
+                                } else {
+                                    if (born_day > 28) {
+                                        alert("PLZ Input correct day.");
+                                    }
+                                }
+                               
+                            } else if (born_month == 1 || born_month == 3 || born_month == 5 || born_month == 7 || born_month == 8 || born_month == 10|| born_month == 12) {
+                                if (born_day > 31) {
+                                    alert("PLZ Input correct day.");
+                                }
+                            } else {
+                                if (born_day > 30) {
+                                    alert("PLZ Input correct day.");
+                                }
+                            }
+                            
+                            if (born_year > now_year) {
+                                alert("NO BODY CAN BORN IN FUTURE!");
+                            }
+                            if (born_year == now_year && born_month > now_month) {
+                                alert("NO BODY CAN BORN IN FUTURE!");
+                            }
+                            if (born_year == now_year && born_month == now_month && born_day > now_day) {
+                                alert("NO BODY CAN BORN IN FUTURE!");
+                            }
+
+                            
+                            age = DateInterval([born_year, born_month, born_day], [now_year, now_month, now_day]);
+
+                            var Ftemp = ($("#temperature").val()) * 1.8 + 32;
+                            var Ktemp = Number($("#temperature").val()) + 273;  //???
+                            
+                            if (Ftemp < 60) {
+                                var feeling = "cold ";
+                            } else {
+                                var feeling = "warm ";
+                            }
+
+                            var letter = (
+                                "Dear " + 
+                                gender + 
+                                $("#fn").val() + " " + 
+                                $("#sn").val() + "," + "\n" + 
+                                "Today it is " + 
+                                now_year + ", " + 
+                                now_month + "," + 
+                                now_day + "." + 
+                                " and " + 
+                                age[0] + "years" + age[1] + "months" + age[2] +  
+                                "days ago you were born. You are " + 
+                                age[0] + 
+                                "years old.\nYou live in " + 
+                                $("#city").val() + 
+                                " in " + 
+                                $("#country").val() + 
+                                " and the temperature is currently " + 
+                                $("#temperature").val() + "in C which is" + 
+                                Ftemp + "in F and" + 
+                                Ktemp + "in K. That is pretty " + 
+                                feeling + 
+                                ".\nWith kind regards,\n" + 
+                                $("#mn").val()
+                            );
+                            // alert(letter);
+                            var r = confirm(letter + "\nConfirm to Save to Local");
+                            if (r == true) {
+                                download(letter, "K-Letter.txt", "text/plain");
+                            }
+                        }
+                    ) 
+                })
+            </script>
+            
+            <table>
+                <tr><td>My name:</td><td><input type="text" id="mn"></td></tr>
+                <tr><td>First name:</td><td><input type="text" id="fn"></td><td>Second name:</td><td><input type="text" id="sn"></td></tr>
+                <tr>
+                    <td>Gender:</td>
+                    <td>Male</td>
+                    <td><input type="radio" name="sex" id="male"/> </td>
+                    <td>Famale</td>
+                    <td><input type="radio" name="sex" id="female"/> </td>
+                </tr>
+                <tr><td>Year of birth:</td><td><input type="number" id="yb"></td><td>Month of birth:</td><td><input type="number" id="mb"></td><td>Day of birth:</td><td><input type="number" id="db"></td></tr>
+                <tr><td>City:</td><td><input type="text" id="city"></td><td>Country:</td><td><input type="text" id="country"></td></tr>
+                <tr><td>Temperature:</td><td><input type="number" id="temperature"></td></tr>
+                <tr><td><Button type="button" id="save">Save to local</Button></td></tr>
+            </table>
+    </body>
+
+</html>

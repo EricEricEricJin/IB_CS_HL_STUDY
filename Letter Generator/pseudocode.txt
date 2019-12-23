@@ -1,0 +1,199 @@
+FUNC isLeapyear(year: INTEGER)
+	IF year % 100 == 0 THEN
+		IF year % 400 == 0 THEN
+            return True
+        ELSE
+            return False
+        ENDIF
+    ELSE
+        IF year % 4 == 0 THEN
+            return True
+        ELSE
+            return False
+        ENDIF
+    ENDIF
+ENDFUNC
+
+FUNC DateInterval(date_low: INTEGER[], date_high: INTEGER[])
+    DECLEAR date_interval[3]
+    date_interval <- [0,0,0]
+    IF date_high[2] >= date_low[2] THEN
+        date_interval[2] <- date_high[2] - date_low[2]
+        IF date_high[1] >= date_low[1] THEN
+            date_interval[1] <- date_high[1] - date_low[1]
+            date_interval[0] <- date_high[0] - date_low[0]
+        ELSE
+            date_interval[1] <- 12 + date_high[1] - date_low[1]
+            date_interval[0] <- date_high[0] - date_low[0] - 1
+        ENDIF
+    ELSE
+        DECLEAR days: INTEGER
+        days <- 0
+        DECLEAR month: INTEGER
+        month <- date_low[1]
+
+        IF month == 1 THEN
+            days <- days + 31
+        ELSE IF month == 2 THEN
+            IF isLeapyear(date_high[0]) THEN
+                days <- days + 29
+            ELSE
+                days <- days + 28
+            ENDIF
+        ELSE IF month == 3 THEN
+            days <- days + 31
+        ELSE IF month == 4 THEN
+            days <- days + 30
+        ELSE IF month == 5 THEN
+            days <- days + 31
+        ELSE IF month == 6 THEN
+            days <- days + 30
+        ELSE IF month == 7 THEN
+            days <- days + 31
+        ELSE IF month == 8 THEN
+            days <- days + 31
+        ELSE IF month == 9 THEN
+            days <- days + 30
+        ELSE IF month == 10 THEN
+            days <- days + 31
+        ELSE IF month == 11 THEN
+            days <- days + 30
+        ELSE IF month == 12 THEN
+            days <- days + 31
+        ENDIF
+
+        days <- days - date_low[2] + date_high[2]
+        date_interval[2] <- days
+
+        IF date_high[1] > date_low[1] THEN
+            date_interval[1] <- date_high[1] - date_low[1] - 1
+            date_interval[0] <- date_high[0] - date_low[0]
+        ELSE IF date_high[1] == date_low[1] THEN
+            date_interval[1] <- 11
+            date_interval[0] <- date_high[0] - date_low[0] - 1
+        ELSE
+            date_interval[1] <- 12 + date_high[1] - date_low[1] - 1
+            date_interval[0] <- date_high[0] - date_low[0] - 1
+        ENDIF
+    ENDIF
+    return date_interval
+ENDFUNC
+
+DECLEAR now_year: INTEGER
+now_day <- 0
+now_year <- GetCurrentYear()
+
+DECLEAR now_month: INTEGER
+now_month <- 0
+now_month <- GetCurrentMonth()
+
+DECLEAR now_day: INTEGER
+now_day <- 0
+now_day <- GetCurrentDay()
+
+
+DECLEAR myname: STRING
+myname <- ""
+INPUT "Input your name": myname
+
+DECLEAR firstname: STRING
+firstname <- ""
+INPUT "Input receiver's first name": firstname
+
+DECLEAR surname: STRING
+surname <- ""
+INPUT "Input receiver's surname": surname
+
+DECLEAR gender: STRING
+gender <- ""
+INPUT "Input the receiver's gender(male input "M" and female input "F")": gender
+IF gender == "M" THEN
+    gender <- "Mr. "
+ELSE IF gender == "F" THEN
+    gender <- "Ms. "
+ELSE
+    OUTPUT "WARNING: YOU DIDN'T INPUT THE VALID GENDER!"
+    gender <- "Mr / Ms. "
+ENDIF
+
+
+
+DECLEAR born_year: INTEGER
+born_year <- 0
+
+BY_IN:
+INPUT "Input the receiver's born year": born_year
+IF born_year > now_year THEN
+    OUTPUT "Is he or she born in the future??? Reinput a correct born year."
+    GOTO BY_IN
+ENDIF
+
+
+DECLEAR born_month: INTEGER
+born_month <- 0
+
+BM_IN:
+INPUT "Input the receiver's born month": born_month
+
+IF born_month > 12 or born_month < 1 THEN
+    OUTPUT "One year only has 12 month. Reinput a correct born month."
+    GOTO BM_IN
+ENDIF
+
+IF (born_year < now_year or born_month <= now_month) == False THEN
+    OUTPUT "Is he or she born in the future??? Reinput a correct born month."
+    GOTO BM_IN
+ENDIF
+
+
+DECLEAR born_day: INTEGER
+born_day <- 0
+
+BD_IN:
+INPUT "Input the receiver's born year": born_day
+IF (born_year < now_year or born_month < now_month or born_day <= now_day) == False THEN
+    OUTPUT "Is he or she born in the future??? Reinput a correct born day."
+    GOTO BD_IN
+ENDIF
+
+
+DECLEAR city: STRING
+INPUT "Input the city the receiver lives in": city
+
+DECLEAR country: STRING
+INPUT "Input the country the receiver lives in": country
+
+DECLEAR Ctemperature: INTEGER
+INPUT "Input the temperature in Celsius in the city the receiver lives.": Ctemperature
+
+DECLEAR age: INTEGER[]
+age <- [0, 0, 0]
+age <- DateInterval([born_year, born_month, born_day], [now_year, now_month, now_day])
+
+DECLEAR Ftemp: INTEGER
+Ftemp <- 0
+Ftemp <- Ctemperature * 1.8 + 32
+
+DECLEAR Ktemp: INTEGER
+Ktemp <- 0
+Ktemp <- Ctemperature + 273
+
+
+DECLEAR feeling: STRING
+feeling <- ""
+IF Ftemp < 60 THEN
+    feeling <- "cold"
+ELSE
+    feeling <- "warm"
+ENDIF
+
+DECLEAR letter: STRING
+letter <- ""
+
+letter = 
+"Dear " + gender + firstname + " " + surname + "\nToday it is " + 
+now_year + ", " + now_month + "," + now_day + ". And " + 
+age[0] + " years " + age[1] + " months " + age[2] + " days ago you were born. You are " + 
+age[0] + " years old.\nYou live in " + city + " in " + country + " and the temperature is currently " + Ctemperature + " in Celsius which is " + Ftemp + " in Fahrenheit and " + Ktemp + " in Kelvin. That is pretty " + feeling + ".\nWith kind regards, \n " + mynames
+
+OUTPUT "The letter generated is: \n" + letter
