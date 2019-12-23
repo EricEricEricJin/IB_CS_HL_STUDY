@@ -1,0 +1,80 @@
+FUNC die(): INT
+	RETURN (1 + int(random() * 6))
+ENDFUNC
+
+FUNC coin(): BOOL
+	IF random() < 0.5 THEN
+		RETURN True
+	ELSE
+		RETURN False
+	ENDIF
+ENDFUNC
+
+DECLEAR p1_name: STRING
+p1_name <- INPUT("Player 1, please input your name")
+DECLEAR p2_name: STRING
+p2_name <- INPUT("Player 2, Please input your name")
+
+DECLEAR p1_value: UNDEF
+p1_value <- die()
+
+DECLEAR p2_value: UNDEF
+p2_value <- die()
+
+IF p1_value > p2_value THEN
+	OUTPUT (p1_name, " wins with a value of ", p1_value)
+	EXIT
+ELSE IF p2_value > p1_value THEN
+	OUTPUT (p2_name, " wins with a value of ", p2_value)
+	EXIT
+
+ENDIF
+
+p1_value = coin()
+p2_value = coin()
+
+IF p1_value != p2_value THEN
+	IF p1_value == True THEN
+		OUTPUT (p1_name, " wins by flipping a coin to Heads.")
+	ELSE
+		OUTPUT (p2_name, " wins by flipping a coin to Heads.")
+	ENDIF
+	EXIT
+ENDIF
+
+p1_value = die()
+p2_value = die()
+
+IF p2_value % 2 != p1_value % 2 THEN
+	IF p1_value % 2 == 1 THEN
+		OUTPUT (p1_name, " wins by rolling an odd number.")
+	ELSE
+		OUTPUT (p2_name, " wins by rolling an odd number.")
+	ENDIF
+	EXIT
+ENDIF
+
+WHILE True
+	p1_value = INPUT (p1_name, "Please input your age.")
+	IF p1_value >= 0 THEN
+		BREAK
+	ENDIF
+	OUTPUT "Sorry, this is not a valid age!"
+ENDWHILE
+
+
+WHILE True
+	p2_value = INPUT (p2_name, "Please input your age.")
+	IF p2_value >= 0 THEN
+		BREAK
+	ENDIF
+	OUTPUT "Sorry, this is not a valid age!"
+ENDWHILE
+
+IF p1_value > p2_value THEN
+	OUTPUT (p1_name, " is ", p1_value, " years old and therefor wins this game.")
+ELSE IF p2_value > p1_value THEN
+	OUTPUT (p2_name, " is ", p2_value, " years old and therefor wins this game.")
+ELSE
+	OUTPUT "SORRY< NO WINNER!"
+ENDIF

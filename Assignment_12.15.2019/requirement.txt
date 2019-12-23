@@ -1,0 +1,23 @@
+Design an algorithm and implement this algorithm in Python that works according the following specs:
+Two players roll a die.
+Ask the players for their name. Simulate the die with a random function.
+If a player has a higher score than the other one, this player wins and the output should be <name player> wins with a score of <score>
+If they roll the same number, they have to flip a coin. Result of this is either Heads or Tails.
+Simulate this and store result in a boolean called Heads. 
+If a player has Heads he wins and you have to output this with <player name> wins by flipping a coin to Heads.
+If both player have Heads or both player have Tails they have to roll the die again.
+If one player an odd number now, he wins. Output <name player> wins by rolling odd number.
+If they both have an odd numbers or both have an even numbers, then ask the players to enter their age.
+The oldest player wins! Output should be <name player> is <age> years old and therefor wins this game.
+ 
+Requirements - Rules
+- Two students per project. Choose yourself. 2=2, not 2=1 or 2=3. You know what I mean. Check your Boolean logic.
+- No arrays can be used
+- In Python variable declarations with datatypes and intialisations need to be shown commented
+- Raptor, Pseudocode & Python implementation required.
+- Proof of correct working of your Python code.
+- Your Python implementation needs to be based on your pseudocode design and raptor design. They cannot be different!
+- Report to be uploaded in pdf format on Schoology using the submission link supplied by Mr.K. with cover page, raptor flowchart, pseudocode, Python code & proof of correctness (test with screenshots of in and output!). 
+- Grade awarded as classwork.
+- No excuses for non delivery accepted. Grade awarded is 0%.
+- Any issues: communicate with me up front!
