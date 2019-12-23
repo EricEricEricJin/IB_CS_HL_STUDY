@@ -1,0 +1,318 @@
+
+%-- coding: UTF-8 --
+
+\documentclass{article}
+\usepackage[UTF8]{ctex}
+\usepackage{graphicx}
+\usepackage[fleqn]{amsmath}
+
+\linespread{1.5}
+
+\begin{document}
+
+
+%\vspace{10cm}
+%\begin{center}
+%
+%\begin{large}
+%\textbf{How JPEG and ZIP work and compression test about ZIP compression}
+%\end{large}
+%\\[50]
+%
+%\textbf{DP1-1 Eric Jin} \\
+%%\textbf{DP1-1 Alex Wang} \\
+%
+%\end{center}
+%\end{center}5
+%
+%\newpage
+%
+\setlength{\parindent}{0pt}
+
+\author{DP1-1 Eric}
+\title{Work of JPEG and ZIP and compression test of ZIP}
+\date{}
+
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Preliminary}
+\subsection{Introduction to BitMap Image(BMP)}
+A image format which storage every pixel's color directly. Coommonly we use one byte per color so 24 bits per pixel.
+
+\subsection{Introduction to Joint Photographic Experts Group Image(JPG)}
+JPEG(.jpg or .jpeg) is an image format developed by Joint Photographic Experts Group. It can efficiently compress the image thus get a relative high quality image as the compress rate is high. This compression is lossy compression. \cite{ref1}
+
+\subsection{Introduction to Huffman Coding}
+Huffman Coding is a compression method which use shorter binary to represent character with higher frequency. In this code method, a element's code can't be another element's code's prefix. Otherwise, this will lead to not only one decode after encode. This method works in the following way: \\
+\item Calculate frequency and generate binary tree. \\
+\item Generate dictionary according to the binary tree. \\
+\item Use the dictionary to encode / decode the string. \\
+
+\cite{ref6}
+
+
+Let's take string $ABDCB AADDA ADBCC CBDAA$ as an example. \\
+\textbf{Calculate frequency} \\
+\begin{table}[h]
+\begin{tabular}{|l|l|l|}
+\hline
+Character & Times & Frequency \\ \hline
+A         & 7     & 0.35      \\ \hline
+B         & 4     & 0.2       \\ \hline
+C         & 4     & 0.2       \\ \hline
+D         & 5     & 0.25      \\ \hline
+\end{tabular}
+\caption{Frequency}
+\end{table}
+
+\textbf{Build binary tree} \\
+
+
+ \begin{figure}[h]
+    \small
+     \centering
+    \includegraphics[bb=0 0 602 422,height = 4cm,clip]{rimg/binary tree.jpg}
+     \caption{Binary tree}
+
+ \end{figure}
+
+\textbf{Generate dictionary} \\
+\begin{table}[h]
+\begin{tabular}{|l|l|}
+\hline
+Character & Code \\ \hline
+B         & 111  \\ \hline
+C         & 110  \\ \hline
+D         & 10   \\ \hline
+A         & 0    \\ \hline
+\end{tabular}
+\caption{Dictionary}
+\end{table}
+\\
+
+\textbf{Code the string} \\
+$ABDCB AADDA ADBCC CBDAA$ \\
+$\to 011110110111 0010100 010111110110 1101111000$
+
+
+
+\newpage
+\section{Reason why .bmp file is always larger than .jpg file}
+	\subsection{How JPG works}
+	JPG Image is formed in the following way:\\
+	
+
+	\textbf{Devide Image}:
+	Devide the image into many small parts with resolution of $8 \times 8$ pixels.\\
+
+  \textbf{Colorspace Conversion}:
+	For every $8 \times 8$ partm we transfer the color format from RGB into YCbCr, as known as MPEG Compression. Here, \textbf{Y} means luminance, \textbf{Cb} means Chroma Blue, and \textbf{Cr} means Chroma Red.
+
+	These three quantities are derived by the equations: \\
+
+
+	\begin{eqnarry}
+	Y = K_R \cdot R + K_G \cdot G + K_B \cdot B \\
+	C_B = \frac{1}{2} \cdot \frac{B - Y}{1 - K_B} \\
+	C_R = \frac{1}{2} \cdot \frac{R - Y}{1 - K_R} \\
+	\end{eqnarry}
+
+
+	Here, $R, G, B$ are value of $R,G,B$ in RGB Format. $K_R, K_G, K_B$ are defined with values differently. In ITU-R BT.601 standard, they are defined in the following way: \\
+
+
+	\begin{eqnarry}
+	K_R = 0.299 \\
+	K_G = 0.587 \\
+	K_B = 0.114 \\
+	\end{eqnarry}
+
+\cite{ref3} \\
+
+	\textbf{Downsampling}:
+		Since human eyes are insensitive to the red and blue chroma, compared with brightness, JPG compress Cb and Cr, but don't compress Y(luminance). So, JPG compress the Cb and Cr channel to \textbf{about} $\frac{1}{4}$ of its original size.This compression is lossy.\\
+
+	\textbf{Color bleeding}:
+		For chrominance channels, which is less sensitive to human eyes, can be "bleed", which means 4 pixels ($2\times 2$ block) can be averaged into a single color. For some blocks across the sharp edge, the color is bleeded. \\
+
+	\textbf{Discrete cosine transform}:
+
+		The, elements in $Y,U,V$ Component are in range (0 ~ 255). for each element, minus 128. So the element become in range (-128~127). \\
+
+		Then, use 2-Dimonsion Discrete cosine transform (showed in the fumular below), we can transfer the $8 \times 8$ matrix into a new $8 \times 8$ matrix whose (0, 0) element shows the DC Component, and the other elements show the AC Component. This transfer is reverseable, so when in decoding, we can just use the reverse transfer to decode the image. \\
+
+		$$G_{u,v} = \frac{1}{4} \alpha(u)\alpha(v)\sum\limit_{x = 0}^{7} \sum\limit_{y = 0}^{7} g_{x, y} \cos[\frac{(2x + 1)u \pi}{16}] \cos[\frac{(2y+1) v \pi}{16}]$$
+
+		$g$ is the $8 \times 8$ matrix before transfer, $G$ is the $8 \times 8$ matrix after transfer.\\
+		
+		\begin{equation}
+			\alpha(x) =
+			\left\{
+						 \begin{array}{lr}
+							\frac{1}{\sqrt{8}} (x = 0) & \\
+							\frac{1}{2} (x \neq 0) &
+
+						 \end{array}
+			\right.
+		\end{equation} \\
+		$$u, v \in \{0,1,2,3,4,5,6,7\}$$
+		$x, y$ is the index in the original matrix \\
+
+		Also, the DC Component is much larger than AC Component in magnitude, so we can then do the transfer below. \\
+
+	\textbf{Quantization}:
+		Quantization matrix $Q$ is a $8 \times 8$ matrix which is included in the JPG Code system. \\ Then, let $M$ be the matrix whose each element equals to the correspond element in matrix $G$ devided by the Quantization matrix. \\
+
+		$$M_{u,v} = \frac{G_{u,v}}{Q_{u,v}}$$
+		Here, $A_{u,v}$ means the $u^{th}$ row, $v^{th}$ calcumum element of matrix $A$.
+
+		And then round the elements in matrix $M$. We'll find that the right-down part of the matrix all become $0$. \\
+		
+
+	\textbf{Compression}:
+	However, when expend, the zeros are not togather, which is difficult to compress. So, we expend the matrix with zig-zag like scan like this to make the zeros stay together:\\
+	
+	\newpage
+	
+
+	\begin{figure}[h]
+		\includegraphics[bb = 0 0 306 306, height = 3cm]{rimg/zigzag.png}
+		\caption{How to scan throught the matrix zigzagly}
+
+	\end{figure}
+
+
+	\begin{figure}[h]
+		\includegraphics[bb = 0 0 390 192, height = 3cm]{rimg/matexp.jpg}
+		\caption{example matrix}
+	\end{figure}
+
+	For exmple, the $8 \times 8$ matrix is like this:\\
+
+	\newpage
+
+	This encoded into: \\
+	$-26,-3,0,-3,-2,-6,2,-4,1,-3, \cdots$ \\
+
+	Then, use Huffman enocoding to compress the data, since a lot of zeros are stay together.
+
+	\\ \cite{ref1} \cite{ref2} \cite{ref4}
+\\\\
+	\textbf{Decoding is a reverse process of the encoding process}
+
+
+	\subsection{Why JPG is samller than BMP in size}
+	Bitmap image record every pixel's RGB information. For 24-bit RGB(commonly used), every pixel will take up 24bits. So for a $m \times n$ pixels image, beside the head information and other things, the data will take up $24mn$ bits. \\
+
+	However, for JPG image, the size depends on the downsampling method and the matrix after quantization. The Huffman compression reduce the size by avoiding repeating the same element (here is $0$). So JPG is smaller than bit map image.
+
+
+
+\newpage
+\section{How compression software works}
+%\subsection{Introduction to compress software}
+
+\subsection{Algorithm ZIP Compression use}
+	The compression method ZIP use has two part: LZ Compression and Huffman Compression.
+
+	\textbf{LZ}:
+		This coding method work in the way below: \\
+		For a data, the LZ compressor firstly scan through the data with a sliding window. For the first time it meet a piece of binary, it storage it in the conmmon way. The second time it meet the same binary string, it storega it in the form: (distance, length). For example, for the ascii string below: \\
+		$$abcdabcdabcd$$
+		in binary, it is:
+		$$01100001 01100010 01100011 01100100 01100001 01100010 01100011 01100100 01100001 01100010 01100011 01100100$$
+		we define the sliding window of length 4. \\
+		So, the binary string above is encoded into:
+		$$01100001(32,8)(64,8) 01100010(32,8)(64,8) 01100011(32,8)(64,8) 01100100(32,8)(64,8)$$
+		For
+	\textbf{Huffman Compression}
+		Use Huffman compression to compress the distances to make it smaller in size.
+
+	\\ \cite{ref5}
+
+
+\newpage
+
+\section{Result(compression ratio)of the compression}
+	\textbf{Test software}: \\
+		Windows Compressed(ziped) Folder \\
+	%\textbf{Test file}: \\
+%		\text{Small file}:
+%			File name: test_0 \\
+%			File size: 1 byte \\
+%			File Content: \\
+%			0x4E \\
+%		\\
+\begin{table}[]
+    \caption{Test files}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	File name   & File size       & File type  & Detail                                \\ \hline
+	test\_0     & 1 byte         & plain text &                                       \\ \hline
+	test\_1     & 1,518 bytes     & plain text & highly repeated                       \\ \hline
+	test\_2     & 36,440 bytes    & plain text & highly repeated                       \\ \hline
+	test\_3.bmp & 6,220,854 bytes & BMP Image  &                                       \\ \hline
+	test\_4.jpg & 342,538 bytes   & JPEG Image & the jpg format of the bmp image above \\ \hline
+	\end{tabular}
+\end{table}
+
+	%\textbf{Test result} \\
+
+	\begin{table}[]
+    \caption{Test results}
+		\begin{tabular}{|l|l|l|l|}
+		\hline
+		File name   & Size before compress & Size after compress & Compression ratio \\ \hline
+		test\_0     & 1 byte               & 111 bytes           & 11100 \%          \\ \hline
+		test\_1     & 1,518 bytes          & 136 bytes           & 9.0 \%            \\ \hline
+		test\_2     & 36,440 bytes         & 252 bytes           & 0.69 \%           \\ \hline
+		test\_3.bmp & 6,220,854 bytes      & 693,909 bytes       & 11.2 \%           \\ \hline
+		test\_4.jpg & 342,538 bytes        & 311,022 bytes       & 90.8 \%           \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\textbf{Conclusion of the test}: \\
+	This test successfully tested that: \\
+	
+	\item JPG image is much smaller than bmp image. in other words, this means the jpg is Compressed. Also, the hight compression ratio of JPG shows that it has been commpressd and can't be compressed a lot anymore.\\
+	\item ZIP compress is quite efficient for long / highly repeated file. For short / less repreted file, it may even make the file bigger.
+
+\newpage
+
+\begin{thebibliography}{9}
+\bibitem{ref1}
+追梦辅导班. "JPEG格式." baike.baidu.com. , 6 Nov. 2019. Web. 17 Nov. 2019.\\
+%$\rm{https://baike.baidu.com/item/JPEG\%E6\%A0\%BC\%E5\%BC\%8F/3462770?fromtitle=JPG\%E6\%A0\%BC\%E5\%BC\%8F&fromid=88929&fr=aladdin}$
+
+\bibitem{ref2}
+McAnlis, Colt. "How JPG Works." freecodecamp 26 Apr. 2016. Web. 17 Nov. 2019. \\
+$\rm{https://www.freecodecamp.org/news/how-jpg-works-a4dbd2316f35/#.y8yys5lh0}$.
+
+\bibitem{ref3}
+TIM邓肯. "RGB与YCbCr." CSDN. 26 Nov. 2018. Web. 17 Nov. 2019. \\
+$\rm{https://blog.csdn.net/hjhjhx26364/article/details/84548911}$.
+
+\bibitem{ref4}
+"JPEG." Wikipedia. 14 Nov. 2019. Web. 17 Nov. 2019.\\
+$\rm{https://en.wikipedia.org/wiki/JPEG}$.
+
+
+\bibitem{ref5}
+天健胡马灵越鸟. "ZIP压缩算法原理解析." CSDN. 28 May. 2019. Web. 17 Nov. 2019. \\
+$\rm{https://blog.csdn.net/pansaky/article/details/90641343}$.
+
+
+\bibitem{ref6}
+xgf415. "霍夫曼编码." CSDN. 22 Sep. 2016. Web. 17 Nov. 2019. \\
+$\rm{https://blog.csdn.net/xgf415/article/details/52628073}$.
+
+\end{thebibliography}
+
+\end{document}
