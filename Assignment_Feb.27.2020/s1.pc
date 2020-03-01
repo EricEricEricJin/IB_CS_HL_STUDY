@@ -1,0 +1,33 @@
+DEFINE age_list[5]: INTEGER[]
+DEFINE name_list[5]: STRING[]
+
+DEFINE counter: INTEGER
+
+FOR counter <- 0 TO 5
+    name_list[counter] <- INPUT("Player", counter + 1, ", please input your name.")
+    age_list[counter] <- INPUT("Player", counter + 1, ", please input your age.")
+ENDFOR
+
+DEFINE age_max: INTEGER
+DEFINE age_min: INTEGER
+DEFINE name_max: STRING
+DEFINE name_min: STRING
+
+age_max = age_list[0]
+age_min = age_list[0]
+
+name_max = name_list[0]
+name_min = name_list[0]
+
+FOR counter <- 1 TO 5
+    IF age_list[counter] > age_max THEN
+        age_max = age_list[counter]
+        name_max = name_list[counter]
+    ELSE IF age_list[counter] < age_min THEN
+        age_min = age_list[counter]
+        name_min = name_list[counter]
+    ENDIF
+ENDFOR
+
+OUTPUT (name_max, " is the oldest in the group, age ", age_max)
+OUTPUT (name_min, " is the youngest in the group, age ", age_min)

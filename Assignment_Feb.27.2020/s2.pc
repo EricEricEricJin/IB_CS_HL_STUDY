@@ -1,0 +1,71 @@
+DEFINE die_1_nums: INTEGER[3]
+DEFINE die_2_nums: INTEGER[3]
+DEFINE name_list: STRING[3]
+
+die_1_nums <- []
+die_2_nums <- []
+name_list <- []
+
+DEFINE counter: INTEGER
+counter <- 0
+
+FOR counter <- 0 to 3
+    die_1_nums[counter] <- randint(1,6)
+    die_2_nums[counter] <- randint(1,6)
+    name_list[counter] <- INPUT("Give your name")
+ENDFOR
+
+DEFINE num_max: INTEGER
+DEFINE name_max: STRING
+DEFINE tie: BOOL
+
+num_max <- die_1_nums[0]
+name_max <- name_list[0]
+tie <- FALSE
+
+FOR counter <- 1 to 3
+    IF die_1_nums[counter] > num_max THEN
+        num_max = die_1_nums[counter]
+        name_max = name_list[counter]
+        tie = FALSE
+    ELSE IF die_1_nums[counter] == num_max THEN
+        tie = TRUE
+    ENDIF
+ENDFOR
+
+IF tie THEN
+    DEFINE die_sum_nums: INTEGER[3]
+    die_sum_nums <- []
+    FOR counter <- 0 to 3
+        die_sum_nums[counter] <- die_1_nums[counter] + die_2_nums[counter]
+    ENDFOR
+
+    num_max <- die_sum_nums[0]
+    name_max <- name_list[0]
+    tie = FALSE
+
+    FOR counter <- 1 to 3
+        IF die_sum_nums[counter] > num_max THEN
+            num_max = die_sum_nums[counter]
+            name_max = name_list[counter]
+            tie = FALSE
+        ELSE IF die_sum_nums[counter] == num_max THEN
+            tie = TRUE
+        ENDIF
+    ENDFOR
+
+    IF tie THEN
+        FOR counter <- 0 to 3
+            IF die_1_nums[counter] == die_2_nums[counter] THEN
+                OUTPUT name_list[counter], " win."
+                EXIT
+            ENDIF
+        ENDFOR
+        OUTPUT "no winner"
+    ELSE
+        OUTPUT name_max + " win."
+    ENDIF
+
+ELSE
+    OUTPUT name_max + " win."
+ENDIF
