@@ -1,0 +1,20 @@
+FUNC binary_search(ordered_data, target)
+    DEFINE low: INTEGER
+    DEFINE high: INTEGER
+    DEFINE mid: INTEGER
+    low <- 0
+    high <- ordered_data.LENGTH - 1
+
+    WHILE high >= low
+        mid = INT((low + high) / 2)
+        IF ordered_data[mid] == target THEN
+            RETURN mid
+        ELSE IF ordered_data[mid] > target THEN
+            high = mid - 1
+        ELSE
+            low = mid + 1
+        ENDIF
+    ENDWHILE
+
+    RETURN -1
+ENDFUNC

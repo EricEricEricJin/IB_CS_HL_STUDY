@@ -1,0 +1,18 @@
+INT N, i, j, x
+INPUT (N)
+INT unsortedarry [N]
+FOR (i=0; i<N; i++)
+INPUT (unsortedarry [i]);
+ENDFOR
+FOR (i=0; i<N; i++)
+    FOR (j=0; j<N-i-1; j++)
+       IF (unsortedarry [j] > unsortedarry [j+1])
+            x = unsortedarry [j]
+            unsortedarry [j] = unsortedarry [j+1]
+            unsortedarry [j+1] = x
+        ENDIF
+    ENDFOR 
+ENDFOR
+FOR (i=0; i<N; i++)
+    OUTPUT (unsortedarry[i] + " ")
+ENDFOR
